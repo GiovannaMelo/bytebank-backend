@@ -1,0 +1,681 @@
+## Tech Challenge 2 - Sistema Bancário
+
+Sistema bancário completo com funcionalidades de usuário, conta, cartão e transações financeiras.
+
+### 🚀 Funcionalidades
+
+- ✅ Autenticação de usuários com JWT
+- ✅ Gerenciamento de contas bancárias
+- ✅ Cartões de crédito/débito
+- ✅ Transações financeiras (crédito/débito)
+- ✅ Extrato bancário
+- ✅ Documentação automática com Swagger
+- ✅ Validação de dados com Joi
+- ✅ Tratamento centralizado de erros
+- ✅ MongoDB com Mongoose
+
+### 🛠️ Tecnologias
+
+- **Backend**: Node.js + Express
+- **Banco de Dados**: MongoDB + Mongoose
+- **Autenticação**: JWT (JSON Web Token)
+- **Validação**: Joi
+- **Documentação**: Swagger
+- **Containerização**: Docker
+
+### 📦 Instalação e Execução
+
+#### Com Docker
+```bash
+# Construir a imagem
+docker build -t tech-challenge .
+
+# Executar o container
+docker run -p 3001:3001 tech-challenge
+```
+
+#### Sem Docker
+```bash
+# Instalar dependências
+npm install
+
+# Executar em desenvolvimento
+npm run dev
+
+# Executar em produção
+npm start
+```
+
+
+### Importando collection no postman
+- Neste projeto possui o arquivo tech-challenge-2.postman_collection que é uma collection do postman, você tendo o postman pode clicar no botão de import e selecionar esse arquivo lá na caixa de drop,
+após realizar a importação você terá todo os Requests desse projeto.
+
+![alt text](image.png)
+
+![alt text](image-1.png)
+
+
+### Swagger
+
+para acessar o Swagger basta você entrar na rota /docs
+as rotas que necessitam de Autenticação você pode colar o Bearer token no cadeado
+
+### Autenticando 
+
+#### Criando usuário
+    "http:localhost:3001/user"
+    body:
+        {
+            "username": "Aluno Carequinha",
+            "email": "teste@gmail.com",
+            "password": "testes"
+        }  
+
+    cURL
+    ``` 
+        curl --location 'localhost:3001/user' \
+        --header 'Content-Type: application/json' \
+        --data-raw '{
+            "username": "Aluno Carequinha",
+            "email": "teste@gmail.com",
+            "password": "testes"
+        }'
+    ```
+
+    returno:
+
+    ```
+    {
+        "message": "usuário criado com sucesso",
+        "result": {
+            "username": "Aluno Carequinha",
+            "email": "teste@gmail.com",
+            "password": "testes",
+            "id": "67607133f840bb97892eb657"
+        }
+    }
+    ```
+
+#### Autenticando
+    "localhost:3001/user/auth"
+    Body: 
+        {
+            "email": "teste@gmail.com",
+            "password": "testes"
+        }
+    cURL
+    ```
+        curl --location 'localhost:3001/user/auth' \
+        --header 'Content-Type: application/json' \
+        --data-raw '{
+            "email": "teste@gmail.com",
+            "password": "testes"
+        }'
+    ```
+
+    retorno
+    ```
+        {
+            "message": "Usuário autenticado com sucesso",
+            "result": {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IklzcmFlbCAyIiwiZW1haWwiOiJ0ZXN0ZUBnbWFpbC5jb20iLCJwYXNzd29yZCI6InRlc3RlcyIsImlkIjoiNjc2MDcxMzNmODQwYmI5Nzg5MmViNjU3IiwiaWF0IjoxNzM0MzczNjg4LCJleHAiOjE3MzQ0MTY4ODh9.jtaRKSifN_j7rFWn1KkH5fykecwhXFW0G4wLqj24I-k"
+            }
+        }
+    ```
+
+    Esse Token deve user usado para realizar as chamadas das outras apis
+
+### Conta
+
+#### Criando conta
+    POST localhost:3001/account
+
+    Authorization Bearer {{Token}}
+
+    Body:
+    ```json
+    {
+        "type": "Debit",
+        "name": "Conta Principal",
+        "description": "Conta corrente para uso diário",
+        "initialBalance": 1000
+    }
+    ```
+
+    Exemplos de tipos de conta:
+    - Debit: Conta corrente
+    - Credit: Cartão de crédito
+    - Savings: Conta poupança
+    - Investment: Conta de investimento
+
+    cURL
+    ```
+        curl --location 'localhost:3001/account' \
+        --header 'Content-Type: application/json' \
+        --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IklzcmFlbCAyIiwiZW1haWwiOiJ0ZXN0ZUBnbWFpbC5jb20iLCJwYXNzd29yZCI6InRlc3RlcyIsImlkIjoiNjc2MDcxMzNmODQwYmI5Nzg5MmViNjU3IiwiaWF0IjoxNzM0MzczNjg4LCJleHAiOjE3MzQ0MTY4ODh9.jtaRKSifN_j7rFWn1KkH5fykecwhXFW0G4wLqj24I-k' \
+        --data '{
+            "type": "Debit",
+            "name": "Conta Principal",
+            "description": "Conta corrente para uso diário",
+            "initialBalance": 1000
+        }'
+    ```
+
+    Retorno
+    ```json
+    {
+        "message": "Conta criada com sucesso",
+        "result": {
+            "id": "67607133f840bb97892eb659",
+            "type": "Debit",
+            "userId": "67607133f840bb97892eb657",
+            "name": "Conta Principal",
+            "description": "Conta corrente para uso diário",
+            "initialBalance": 1000,
+            "createdAt": "2024-12-16T18:29:08.734Z"
+        }
+    }
+    ```
+
+    Retorno quando há saldo inicial (transação de abertura criada automaticamente):
+    ```json
+    {
+        "message": "Conta criada com sucesso",
+        "result": {
+            "id": "67607133f840bb97892eb659",
+            "type": "Debit",
+            "userId": "67607133f840bb97892eb657",
+            "name": "Conta Principal",
+            "description": "Conta corrente para uso diário",
+            "initialBalance": 1000,
+            "createdAt": "2024-12-16T18:29:08.734Z"
+        }
+    }
+    ```
+
+#### Buscando conta
+    "localhost:3001/account"
+
+    Authorization: Bearer {{Token}}
+
+    cURL
+    ```
+        curl --location 'localhost:3001/account' \
+        --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IklzcmFlbCAyIiwiZW1haWwiOiJ0ZXN0ZUBnbWFpbC5jb20iLCJwYXNzd29yZCI6InRlc3RlcyIsImlkIjoiNjc2MDcxMzNmODQwYmI5Nzg5MmViNjU3IiwiaWF0IjoxNzM0MzczNjg4LCJleHAiOjE3MzQ0MTY4ODh9.jtaRKSifN_j7rFWn1KkH5fykecwhXFW0G4wLqj24I-k'
+    ```
+    Retorno
+    ```
+        {
+            "message": "Conta encontrada carregado com sucesso",
+            "result": {
+                "account": [
+                    {
+                        "id": "67607133f840bb97892eb659",
+                        "type": "Debit",
+                        "userId": "67607133f840bb97892eb657"
+                    }
+                ],
+                "transactions": [
+                    {
+                        "id": "67607174f840bb97892eb669",
+                        "accountId": "67607133f840bb97892eb659",
+                        "type": "Debit",
+                        "value": -200,
+                        "date": "2024-12-16T18:29:08.734Z"
+                    },
+                    {
+                        "id": "67607174f840bb97892eb669",
+                        "accountId": "67607133f840bb97892eb659",
+                        "type": "Credit",
+                        "value": 200,
+                        "from": "text",
+                        "to": "text",
+                        "anexo": "text",
+                        "date": "2024-12-16T18:29:08.734Z"
+                    }
+                ],
+                "cards": [
+                    {
+                        "id": "67607133f840bb97892eb65b",
+                        "accountId": "67607133f840bb97892eb659",
+                        "type": "Debit",
+                        "is_blocked": false,
+                        "number": "13748712374891010",
+                        "dueDate": "2027-01-07T00:00:00.000Z",
+                        "functions": "Debit",
+                        "cvc": "505",
+                        "paymentDate": null,
+                        "name": "Carequinha"
+                    }
+                ]
+            }
+        }
+    ```
+
+#### Criando Transação
+    "localhost:3001/account/transaction"
+
+    Body
+
+        {
+            "accountId": "67607133f840bb97892eb659",
+            "description": "Salário mensal",
+            "amount": 5000,
+            "type": "income", // income | expense
+            "category": "Salário",
+            "account": "Conta Principal",
+            "notes": "Salário do mês de dezembro",
+            "tags": ["salário", "renda"],
+            "anexo": "comprovante.pdf"
+        }
+
+    Exemplo de despesa:
+        {
+            "accountId": "67607133f840bb97892eb659",
+            "description": "Compras no supermercado",
+            "amount": 150.50,
+            "type": "expense",
+            "category": "Alimentação",
+            "account": "Cartão de Crédito",
+            "notes": "Compras semanais",
+            "tags": ["alimentação", "supermercado"],
+            "anexo": "nota-fiscal.pdf"
+        }
+
+    cURL
+    ```
+        curl --location 'localhost:3001/account/transaction' \
+        --header 'Content-Type: application/json' \
+        --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IklzcmFlbCAyIiwiZW1haWwiOiJ0ZXN0ZUBnbWFpbC5jb20iLCJwYXNzd29yZCI6InRlc3RlcyIsImlkIjoiNjc2MDcxMzNmODQwYmI5Nzg5MmViNjU3IiwiaWF0IjoxNzM0MzczNjg4LCJleHAiOjE3MzQ0MTY4ODh9.jtaRKSifN_j7rFWn1KkH5fykecwhXFW0G4wLqj24I-k' \
+        --data '{
+            "accountId": "67607133f840bb97892eb659",
+            "description": "Salário mensal",
+            "amount": 5000,
+            "type": "income",
+            "category": "Salário",
+            "notes": "Salário do mês de dezembro",
+            "tags": ["salário", "renda"]
+        }'
+    ```
+
+    Retorno
+        {
+            "id": "67607174f840bb97892eb669",
+            "userId": "67607133f840bb97892eb657",
+            "accountId": "67607133f840bb97892eb659",
+            "description": "Salário mensal",
+            "amount": 5000,
+            "type": "income",
+            "category": "Salário",
+            "account": "Conta Principal",
+            "notes": "Salário do mês de dezembro",
+            "tags": ["salário", "renda"],
+            "anexo": "comprovante.pdf",
+            "date": "2024-12-16T18:29:08.734Z"
+        }
+
+#### Buscando transação por ID
+    GET localhost:3001/account/transaction/{{transactionId}}
+
+    Authorization Bearer {{Token}}
+
+    Params:
+        transactionId (obrigatório) - ID da transação
+
+    Exemplo:
+        localhost:3001/account/transaction/67607174f840bb97892eb669
+
+    cURL
+    ```
+        curl --location 'localhost:3001/account/transaction/67607174f840bb97892eb669' \
+        --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IklzcmFlbCAyIiwiZW1haWwiOiJ0ZXN0ZUBnbWFpbC5jb20iLCJwYXNzd29yZCI6InRlc3RlcyIsImlkIjoiNjc2MDcxMzNmODQwYmI5Nzg5MmViNjU3IiwiaWF0IjoxNzM0MzczNjg4LCJleHAiOjE3MzQ0MTY4ODh9.jtaRKSifN_j7rFWn1KkH5fykecwhXFW0G4wLqj24I-k'
+    ```
+
+    Retorno
+    ```json
+    {
+        "message": "Transação carregada com sucesso",
+        "result": {
+            "transaction": {
+                "id": "67607174f840bb97892eb669",
+                "userId": "67607133f840bb97892eb657",
+                "accountId": "67607133f840bb97892eb659",
+                "description": "Salário mensal",
+                "amount": 5000,
+                "type": "income",
+                "category": "Salário",
+                "account": "Conta Principal",
+                "notes": "Salário do mês de dezembro",
+                "tags": ["salário", "renda"],
+                "anexo": "comprovante.pdf",
+                "date": "2024-12-16T18:29:08.734Z"
+            }
+        }
+    }
+    ```
+
+    Retorno quando não encontrada:
+    ```json
+    {
+        "message": "Transação não encontrada",
+        "result": null
+        }
+
+#### Atualizando transação
+    PUT localhost:3001/account/transaction/{{transactionId}}
+
+    Authorization Bearer {{Token}}
+
+    Body (campos opcionais - apenas os que deseja atualizar):
+    ```json
+    {
+        "description": "Salário mensal atualizado",
+        "amount": 5500,
+        "type": "income",
+        "category": "Salário",
+        "account": "Conta Principal",
+        "notes": "Salário do mês de dezembro com reajuste",
+        "tags": ["salário", "renda", "reajuste"],
+        "anexo": "novo-comprovante.pdf"
+    }
+    ```
+
+    cURL
+    ```
+        curl --location --request PUT 'localhost:3001/account/transaction/67607174f840bb97892eb669' \
+        --header 'Content-Type: application/json' \
+        --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IklzcmFlbCAyIiwiZW1haWwiOiJ0ZXN0ZUBnbWFpbC5jb20iLCJwYXNzd29yZCI6InRlc3RlcyIsImlkIjoiNjc2MDcxMzNmODQwYmI5Nzg5MmViNjU3IiwiaWF0IjoxNzM0MzczNjg4LCJleHAiOjE3MzQ0MTY4ODh9.jtaRKSifN_j7rFWn1KkH5fykecwhXFW0G4wLqj24I-k' \
+        --data '{
+            "description": "Salário mensal atualizado",
+            "amount": 5500,
+            "category": "Salário",
+            "notes": "Salário do mês de dezembro com reajuste"
+        }'
+        
+    **Nota**: Na atualização, não é necessário enviar `accountId` - apenas os campos que deseja atualizar.
+    ```
+
+    Retorno
+    ```json
+    {
+        "message": "Transação atualizada com sucesso",
+        "result": {
+            "id": "67607174f840bb97892eb669",
+            "userId": "67607133f840bb97892eb657",
+            "accountId": "67607133f840bb97892eb659",
+            "description": "Salário mensal atualizado",
+            "amount": 5500,
+            "type": "income",
+            "category": "Salário",
+            "account": "Conta Principal",
+            "notes": "Salário do mês de dezembro com reajuste",
+            "tags": ["salário", "renda", "reajuste"],
+            "anexo": "novo-comprovante.pdf",
+            "date": "2024-12-16T18:29:08.734Z"
+        }
+    }
+    ```
+
+#### Excluindo transação
+    DELETE localhost:3001/account/transaction/{{transactionId}}
+
+    Authorization Bearer {{Token}}
+
+    Params:
+        transactionId (obrigatório) - ID da transação
+
+    Exemplo:
+        DELETE localhost:3001/account/transaction/67607174f840bb97892eb669
+
+    cURL
+    ```
+        curl --location --request DELETE 'localhost:3001/account/transaction/67607174f840bb97892eb669' \
+        --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IklzcmFlbCAyIiwiZW1haWwiOiJ0ZXN0ZUBnbWFpbC5jb20iLCJwYXNzd29yZCI6InRlc3RlcyIsImlkIjoiNjc2MDcxMzNmODQwYmI5Nzg5MmViNjU3IiwiaWF0IjoxNzM0MzczNjg4LCJleHAiOjE3MzQ0MTY4ODh9.jtaRKSifN_j7rFWn1KkH5fykecwhXFW0G4wLqj24I-k'
+    ```
+
+    Retorno
+    ```json
+    {
+        "message": "Transação excluída com sucesso",
+        "result": {
+            "deletedTransaction": {
+                "id": "67607174f840bb97892eb669",
+                "userId": "67607133f840bb97892eb657",
+                "accountId": "67607133f840bb97892eb659",
+                "description": "Salário mensal",
+                "amount": 5000,
+                "type": "income",
+                "category": "Salário",
+                "date": "2024-12-16T18:29:08.734Z"
+            }
+        }
+    }
+    ```
+
+    Retorno quando não encontrada:
+    ```json
+    {
+        "message": "Transação não encontrada",
+        "result": null
+    }
+    ```
+
+#### Buscando extrato com paginação
+    localhost:3001/account/{{accountId}}/statement
+
+    Authorization Bearer {{Token}}
+    Params:
+        accountId (obrigatório)
+        page (opcional, padrão: 1)
+        limit (opcional, padrão: 10, máximo: 100)
+        sort (opcional, padrão: date) - campos: date, amount, description, type, category
+        order (opcional, padrão: desc) - valores: asc, desc
+
+    Exemplos:
+        # Primeira página com 10 itens
+        localhost:3001/account/{{accountId}}/statement
+
+        # Segunda página com 5 itens
+        localhost:3001/account/{{accountId}}/statement?page=2&limit=5
+
+        # Ordenado por valor (maior para menor)
+        localhost:3001/account/{{accountId}}/statement?sort=amount&order=desc
+
+        # Ordenado por data (mais antiga primeiro)
+        localhost:3001/account/{{accountId}}/statement?sort=date&order=asc
+
+    ```
+        curl --location 'localhost:3001/account/67607133f840bb97892eb659/statement' \
+        --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IklzcmFlbCAyIiwiZW1haWwiOiJ0ZXN0ZUBnbWFpbC5jb20iLCJwYXNzd29yZCI6InRlc3RlcyIsImlkIjoiNjc2MDcxMzNmODQwYmI5Nzg5MmViNjU3IiwiaWF0IjoxNzM0MzczNjg4LCJleHAiOjE3MzQ0MTY4ODh9.jtaRKSifN_j7rFWn1KkH5fykecwhXFW0G4wLqj24I-k'
+    ```
+
+    Retorno
+        {
+            "message": "Extrato carregado com sucesso",
+            "result": {
+                "transactions": [
+                    {
+                        "id": "67607171f840bb97892eb665",
+                        "userId": "67607133f840bb97892eb657",
+                        "accountId": "67607133f840bb97892eb659",
+                        "description": "Salário mensal",
+                        "amount": 5000,
+                        "type": "income",
+                        "category": "Salário",
+                        "date": "2024-12-16T18:29:05.170Z"
+                    },
+                    {
+                        "id": "67607172f840bb97892eb667",
+                        "userId": "67607133f840bb97892eb657",
+                        "accountId": "67607133f840bb97892eb659",
+                        "description": "Compras no supermercado",
+                        "amount": 150.50,
+                        "type": "expense",
+                        "category": "Alimentação",
+                        "date": "2024-12-16T18:29:06.250Z"
+                    }
+                ],
+                "pagination": {
+                    "currentPage": 1,
+                    "totalPages": 3,
+                    "totalItems": 25,
+                    "itemsPerPage": 10,
+                    "hasNextPage": true,
+                    "hasPrevPage": false,
+                    "nextPage": 2,
+                    "prevPage": null
+                },
+                "filters": {
+                    "sort": "date",
+                    "order": "desc"
+                }
+            }
+        }
+
+## Dashboard
+
+### Resumo Geral da Conta
+    GET localhost:3001/dashboard/summary
+
+    Authorization Bearer {{Token}}
+
+    Retorno:
+    ```json
+    {
+        "message": "Resumo da conta carregado com sucesso",
+        "result": {
+            "totalIncome": 15000,
+            "totalExpense": 8500,
+            "balance": 6500,
+            "transactionCount": 45,
+            "monthlyData": [
+                {
+                    "month": "2024-01",
+                    "income": 5000,
+                    "expense": 3000,
+                    "balance": 2000,
+                    "count": 15
+                }
+            ],
+            "categoryBreakdown": [
+                {
+                    "category": "Salário",
+                    "income": 12000,
+                    "expense": 0,
+                    "total": 12000,
+                    "count": 12
+                }
+            ]
+        }
+    }
+    ```
+
+### Evolução do Saldo
+    GET localhost:3001/dashboard/balance-evolution?months=6
+
+    Authorization Bearer {{Token}}
+
+    Params:
+        months (opcional, padrão: 6) - Número de meses para analisar
+
+    Retorno:
+    ```json
+    {
+        "message": "Evolução do saldo carregada com sucesso",
+        "result": {
+            "balanceEvolution": [
+                {
+                    "date": "2024-01-15T10:30:00.000Z",
+                    "balance": 5000,
+                    "transactionId": "123",
+                    "description": "Salário mensal"
+                }
+            ],
+            "monthlyBalance": [
+                {
+                    "month": "2024-01",
+                    "balance": 2000
+                }
+            ]
+        }
+    }
+    ```
+
+### Top Categorias de Gastos
+    GET localhost:3001/dashboard/top-expense-categories?limit=5
+
+    Authorization Bearer {{Token}}
+
+    Params:
+        limit (opcional, padrão: 5) - Número de categorias para retornar
+
+    Retorno:
+    ```json
+    {
+        "message": "Top categorias carregadas com sucesso",
+        "result": {
+            "topCategories": [
+                {
+                    "category": "Alimentação",
+                    "total": 2500
+                },
+                {
+                    "category": "Transporte",
+                    "total": 1200
+                }
+            ]
+        }
+    }
+    ```
+
+### Transações Recentes
+    GET localhost:3001/dashboard/recent-transactions?limit=10
+
+    Authorization Bearer {{Token}}
+
+    Params:
+        limit (opcional, padrão: 10) - Número de transações para retornar
+
+    Retorno:
+    ```json
+    {
+        "message": "Transações recentes carregadas com sucesso",
+        "result": {
+            "recentTransactions": [
+                {
+                    "id": "123",
+                    "description": "Compras no supermercado",
+                    "amount": 150.50,
+                    "type": "expense",
+                    "category": "Alimentação",
+                    "date": "2024-01-15T10:30:00.000Z"
+                }
+            ]
+        }
+    }
+    ```
+
+### Estatísticas por Período
+    GET localhost:3001/dashboard/period-stats?period=month
+
+    Authorization Bearer {{Token}}
+
+    Params:
+        period (opcional, padrão: month) - Período: month, quarter, year
+
+    Retorno:
+    ```json
+    {
+        "message": "Estatísticas do período carregadas com sucesso",
+        "result": {
+            "periodStats": {
+                "income": 5000,
+                "expense": 3000,
+                "balance": 2000,
+                "transactionCount": 25,
+                "averageTransaction": 320
+            }
+        }
+    }
+    ```
