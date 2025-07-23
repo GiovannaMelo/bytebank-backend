@@ -26,7 +26,7 @@ const authSchema = Joi.object({
 });
 
 const transactionSchema = Joi.object({
-  accountId: Joi.string().required(),
+  accountId: Joi.string().optional(), // Comentado temporariamente - será desvinculado da transação
   description: Joi.string().required(),
   amount: Joi.number().positive().required(),
   type: Joi.string().valid('income', 'expense').required(),

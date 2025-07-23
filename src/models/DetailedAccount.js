@@ -9,7 +9,7 @@ class DetailedAccount {
         category, 
         account, 
         anexo,
-        accountId,
+        // accountId, // Comentado temporariamente - será desvinculado da transação
         from,
         to,
         value
@@ -23,7 +23,7 @@ class DetailedAccount {
         this.category = category
         this.account = account
         this.anexo = anexo
-        this.accountId = accountId
+        // this.accountId = accountId // Comentado temporariamente - será desvinculado da transação
         this.from = from
         this.to = to
         this.value = value // mantido para compatibilidade

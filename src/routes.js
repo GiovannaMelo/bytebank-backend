@@ -459,4 +459,77 @@ router.get('/account/transaction/attachment/:filename',
 router.delete('/account/transaction/:transactionId/attachment', 
   accountController.removeAttachment.bind(accountController))
 
+/**
+ * @swagger
+ * /account/balance/{accountId}:
+ *   get:
+ *     summary: Obtém o saldo atual de uma conta
+ *     tags: [Saldos]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: accountId
+ *         required: true
+ *         description: ID da conta
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Saldo obtido com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 result:
+ *                   type: object
+ *                   properties:
+ *                     accountId:
+ *                       type: string
+ *                     currentBalance:
+ *                       type: number
+ *                     lastCalculatedAt:
+ *                       type: string
+ *                       format: date-time
+ *                     lastTransactionId:
+ *                       type: string
+ *       404:
+ *         description: Conta não encontrada
+ */
+router.get('/account/balance/:accountId', 
+  accountController.getCurrentBalance.bind(accountController))
+
+/**
+ * @swagger
+ * /account/balance/recalculate:
+ *   post:
+ *     summary: Recalcula todos os saldos do usuário em background
+ *     tags: [Saldos]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Recálculo iniciado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 result:
+ *                   type: object
+ *                   properties:
+ *                     status:
+ *                       type: string
+ *                       enum: [processing]
+ *                     message:
+ *                       type: string
+ */
+router.post('/account/balance/recalculate', 
+  accountController.recalculateBalances.bind(accountController))
+
 module.exports = router

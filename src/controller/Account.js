@@ -108,6 +108,19 @@ class AccountController {
 
       const transaction = await saveTransaction({ transaction: transactionDTO, repository: transactionRepository })
       
+      // Calcular saldo em background após criar a transação
+      if (accountId) {
+        const BalanceCalculator = require('../utils/balanceCalculator')
+        const balanceCalculator = new BalanceCalculator()
+        
+        // Agendar cálculo de saldo em background
+        balanceCalculator.calculateBalanceAfterTransaction(
+          userId, 
+          accountId, 
+          transaction.id
+        )
+      }
+      
       res.status(201).json({
         message: 'Transação criada com sucesso',
         result: transaction
@@ -647,6 +660,8 @@ class AccountController {
       }
 
       // Se houver saldo inicial, criar uma transação de abertura
+      // COMENTADO TEMPORARIAMENTE - Saldo será calculado em background
+      /*
       if (initialBalance > 0) {
         const { saveTransaction, transactionRepository } = this.di
         const TransactionDTO = require('../models/DetailedAccount')
@@ -669,6 +684,20 @@ class AccountController {
           repository: transactionRepository 
         })
       }
+      */
+
+      // Inicializar saldo em background
+      if (initialBalance > 0) {
+        const BalanceCalculator = require('../utils/balanceCalculator')
+        const balanceCalculator = new BalanceCalculator()
+        
+        // Agendar cálculo de saldo em background
+        balanceCalculator.calculateBalanceAfterTransaction(
+          userId, 
+          newAccount._id, 
+          null
+        )
+      }
 
       res.status(201).json({
         message: 'Conta criada com sucesso',
@@ -680,6 +709,52 @@ class AccountController {
           description: newAccount.description,
           initialBalance,
           createdAt: newAccount.createdAt
+        }
+      })
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async getCurrentBalance(req, res, next) {
+    try {
+      const { accountId } = req.params
+      const userId = req.user.id
+
+      const BalanceCalculator = require('../utils/balanceCalculator')
+      const balanceCalculator = new BalanceCalculator()
+      
+      const balance = await balanceCalculator.getCurrentBalance(userId, accountId)
+      
+      res.status(200).json({
+        message: 'Saldo obtido com sucesso',
+        result: {
+          accountId,
+          currentBalance: balance.currentBalance,
+          lastCalculatedAt: balance.lastCalculatedAt,
+          lastTransactionId: balance.lastTransactionId
+        }
+      })
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async recalculateBalances(req, res, next) {
+    try {
+      const userId = req.user.id
+
+      const BalanceCalculator = require('../utils/balanceCalculator')
+      const balanceCalculator = new BalanceCalculator()
+      
+      // Executar recálculo em background
+      balanceCalculator.recalculateAllBalances(userId)
+      
+      res.status(200).json({
+        message: 'Recálculo de saldos iniciado em background',
+        result: {
+          status: 'processing',
+          message: 'Os saldos estão sendo recalculados. Consulte o endpoint /balance/:accountId para verificar o progresso.'
         }
       })
     } catch (error) {

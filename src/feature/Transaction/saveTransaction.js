@@ -13,7 +13,7 @@ const saveTransaction = async ({
     category: transaction.category,
     account: transaction.account,
     anexo: transaction.anexo,
-    accountId: transaction.accountId,
+    // accountId: transaction.accountId, // Comentado temporariamente - será desvinculado da transação
     // Campos mantidos para compatibilidade
     from: transaction.from,
     to: transaction.to,

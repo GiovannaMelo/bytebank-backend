@@ -106,11 +106,11 @@ const DetailedAccountSchema = new Schema({
     type: String,
     required: false
   },
-  accountId: {
-    type: Schema.Types.ObjectId,
-    ref: 'Account',
-    required: true
-  },
+  // accountId: {
+  //   type: Schema.Types.ObjectId,
+  //   ref: 'Account',
+  //   required: true
+  // }, // Comentado temporariamente - será desvinculado da transação
   // Campos mantidos para compatibilidade
   from: {
     type: String,
@@ -166,6 +166,34 @@ const UserSchema = new Schema({
   }
 }, { timestamps: true });
 
+const BalanceSchema = new Schema({
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  accountId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Account',
+    required: true
+  },
+  currentBalance: {
+    type: Number,
+    default: 0
+  },
+  lastCalculatedAt: {
+    type: Date,
+    default: Date.now
+  },
+  lastTransactionId: {
+    type: Schema.Types.ObjectId,
+    ref: 'DetailedAccount'
+  }
+}, { timestamps: true });
+
+// Índice composto para garantir que cada usuário tenha apenas um saldo por conta
+BalanceSchema.index({ userId: 1, accountId: 1 }, { unique: true });
+
 // Definindo as relações virtuais
 AccountSchema.virtual('cards', {
   ref: 'Card',
@@ -206,5 +234,6 @@ const Account = mongoose.model('Account', AccountSchema);
 const DetailedAccount = mongoose.model('DetailedAccount', DetailedAccountSchema);
 const Investment = mongoose.model('Investment', InvestmentSchema);
 const User = mongoose.model('User', UserSchema);
+const Balance = mongoose.model('Balance', BalanceSchema);
 
-module.exports = { Account, User, Investment, DetailedAccount, Card };
+module.exports = { Account, User, Investment, DetailedAccount, Card, Balance };
