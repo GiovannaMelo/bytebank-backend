@@ -32,8 +32,7 @@ const transactionSchema = Joi.object({
   type: Joi.string().valid('income', 'expense').required(),
   category: Joi.string().optional(),
   account: Joi.string().optional(),
-  notes: Joi.string().optional(),
-  tags: Joi.array().items(Joi.string()).optional(),
+  date: Joi.date().optional(),
   anexo: Joi.string().optional(),
   // Campos mantidos para compatibilidade
   from: Joi.string().optional(),
@@ -47,8 +46,7 @@ const transactionUpdateSchema = Joi.object({
   type: Joi.string().valid('income', 'expense').optional(),
   category: Joi.string().optional(),
   account: Joi.string().optional(),
-  notes: Joi.string().optional(),
-  tags: Joi.array().items(Joi.string()).optional(),
+  date: Joi.date().optional(),
   anexo: Joi.string().optional(),
   // Campos mantidos para compatibilidade
   from: Joi.string().optional(),

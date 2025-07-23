@@ -8,8 +8,6 @@ class DetailedAccount {
         type, 
         category, 
         account, 
-        notes, 
-        tags, 
         anexo,
         accountId,
         from,
@@ -24,8 +22,6 @@ class DetailedAccount {
         this.type = type // 'income' | 'expense'
         this.category = category
         this.account = account
-        this.notes = notes
-        this.tags = tags || []
         this.anexo = anexo
         this.accountId = accountId
         this.from = from

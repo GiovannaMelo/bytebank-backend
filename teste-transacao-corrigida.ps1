@@ -46,8 +46,7 @@ $transactionBody = @{
     type = "income"
     category = "Salário"
     account = "Conta Principal"
-    notes = "Salário do mês de dezembro"
-    tags = @("salário", "renda")
+
     anexo = "comprovante.pdf"
 } | ConvertTo-Json -Depth 3
 
@@ -85,8 +84,7 @@ $expenseBody = @{
     type = "expense"
     category = "Alimentação"
     account = "Conta Principal"
-    notes = "Compras semanais"
-    tags = @("alimentação", "supermercado")
+
 } | ConvertTo-Json -Depth 3
 
 try {

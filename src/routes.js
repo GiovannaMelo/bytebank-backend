@@ -100,14 +100,10 @@ router.post('/account', validate(accountSchema), accountController.createAccount
  *               account:
  *                 type: string
  *                 description: Nome da conta
- *               notes:
+ *               date:
  *                 type: string
- *                 description: Observações adicionais
- *               tags:
- *                 type: array
- *                 items:
- *                   type: string
- *                 description: Tags para categorização
+ *                 format: date-time
+ *                 description: Data da transação (ISO 8601)
  *               anexo:
  *                 type: string
  *                 description: Anexo da transação
@@ -296,14 +292,6 @@ router.get('/account/transaction/:transactionId', accountController.getTransacti
  *               account:
  *                 type: string
  *                 description: Nome da conta
- *               notes:
- *                 type: string
- *                 description: Observações adicionais
- *               tags:
- *                 type: array
- *                 items:
- *                   type: string
- *                 description: Tags para categorização
  *               anexo:
  *                 type: string
  *                 description: Anexo da transação

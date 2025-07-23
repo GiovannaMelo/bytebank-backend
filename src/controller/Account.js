@@ -68,8 +68,7 @@ class AccountController {
         type, 
         category, 
         account, 
-        notes, 
-        tags, 
+        date,
         anexo,
         from,
         to,
@@ -94,13 +93,11 @@ class AccountController {
         type, 
         category: detectedCategory, 
         account, 
-        notes, 
-        tags, 
         anexo,
         from,
         to,
         value,
-        date: new Date() 
+        date: date ? new Date(date) : new Date() 
       })
 
       if (!transactionDTO.isValid()) {
@@ -365,13 +362,11 @@ class AccountController {
         type: newType,
         category: detectedCategory,
         account: updateData.account || currentTransaction.account,
-        notes: updateData.notes !== undefined ? updateData.notes : currentTransaction.notes,
-        tags: updateData.tags || currentTransaction.tags,
         anexo: updateData.anexo !== undefined ? updateData.anexo : currentTransaction.anexo,
         from: updateData.from !== undefined ? updateData.from : currentTransaction.from,
         to: updateData.to !== undefined ? updateData.to : currentTransaction.to,
         value: updateData.value !== undefined ? updateData.value : currentTransaction.value,
-        date: currentTransaction.date // Manter a data original
+        date: updateData.date ? new Date(updateData.date) : currentTransaction.date
       })
 
       if (!transactionDTO.isValid()) {

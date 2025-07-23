@@ -102,13 +102,6 @@ const DetailedAccountSchema = new Schema({
     type: String,
     required: false
   },
-  notes: {
-    type: String,
-    required: false
-  },
-  tags: [{
-    type: String
-  }],
   anexo: {
     type: String,
     required: false

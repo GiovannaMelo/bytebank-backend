@@ -74,8 +74,7 @@ $incomeData = @{
     type = "income"
     category = "Salário"
     account = "Conta Principal"
-    notes = "Salário do mês de dezembro"
-    tags = @("salário", "renda")
+    date = (Get-Date).ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
     anexo = "comprovante-salario.pdf"
 } | ConvertTo-Json
 
@@ -100,8 +99,7 @@ $expenseData = @{
     type = "expense"
     category = "Alimentação"
     account = "Cartão de Crédito"
-    notes = "Compras semanais"
-    tags = @("alimentação", "supermercado")
+    date = (Get-Date).AddDays(-1).ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
     anexo = "nota-fiscal.pdf"
 } | ConvertTo-Json
 

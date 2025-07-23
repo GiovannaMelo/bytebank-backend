@@ -7,8 +7,7 @@
       "type": "income",
       "category": "Salário",
       "account": "Conta Principal",
-      "notes": "Salário do mês de dezembro",
-      "tags": ["salário", "renda"],
+      "date": "2024-01-15T10:30:00.000Z",
       "anexo": "comprovante.pdf"
     },
     "despesa": {
@@ -18,8 +17,6 @@
       "type": "expense",
       "category": "Alimentação",
       "account": "Cartão de Crédito",
-      "notes": "Compras semanais",
-      "tags": ["alimentação", "supermercado"],
       "anexo": "nota-fiscal.pdf"
     },
     "investimento": {
@@ -29,8 +26,6 @@
       "type": "expense",
       "category": "Investimentos",
       "account": "Conta Investimento",
-      "notes": "CDB 120% CDI - 6 meses",
-      "tags": ["investimento", "cdb"],
       "anexo": "comprovante-aplicacao.pdf"
     },
     "transferencia": {
@@ -40,8 +35,6 @@
       "type": "expense",
       "category": "Transferência",
       "account": "Conta Poupança",
-      "notes": "Transferência para poupança",
-      "tags": ["transferência", "poupança"],
       "anexo": "comprovante-transferencia.pdf"
     }
   },
@@ -54,8 +47,7 @@
   "campos_opcionais": [
     "category",
     "account",
-    "notes",
-    "tags",
+    "date",
     "anexo"
   ],
   "tipos_suportados": [

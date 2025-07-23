@@ -12,8 +12,6 @@ const saveTransaction = async ({
     type: transaction.type, // 'income' ou 'expense'
     category: transaction.category,
     account: transaction.account,
-    notes: transaction.notes,
-    tags: transaction.tags,
     anexo: transaction.anexo,
     accountId: transaction.accountId,
     // Campos mantidos para compatibilidade

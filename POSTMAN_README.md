@@ -145,8 +145,7 @@ if (pm.response.code === 201) {
     "amount": 5000,
     "type": "income",
     "category": "Salário",
-    "notes": "Salário do mês de dezembro",
-    "tags": ["salário", "renda"]
+    "date": "2024-01-15T10:30:00.000Z"
 }
 ```
 
@@ -160,8 +159,7 @@ if (pm.response.code === 201) {
     "amount": 150.50,
     "type": "expense",
     "category": "Alimentação",
-    "notes": "Compras semanais",
-    "tags": ["alimentação", "supermercado"]
+    "date": "2024-01-10T14:20:00.000Z"
 }
 ```
 
@@ -171,8 +169,7 @@ if (pm.response.code === 201) {
     "description": "Salário mensal atualizado",
     "amount": 5500,
     "category": "Salário",
-    "notes": "Salário do mês de dezembro com reajuste",
-    "tags": ["salário", "renda", "reajuste"]
+    "date": "2024-01-20T09:00:00.000Z"
 }
 ```
 
