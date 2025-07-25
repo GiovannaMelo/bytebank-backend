@@ -117,7 +117,7 @@ router.post('/account/transaction', validate(transactionSchema), accountControll
 
 /**
  * @swagger
- * /account/{accountId}/statement:
+ * /account/{userId}/statement:
  *   get:
  *     summary: Obtém extrato da conta com paginação
  *     tags: [Extratos]
@@ -125,9 +125,9 @@ router.post('/account/transaction', validate(transactionSchema), accountControll
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: accountId
+ *         name: userId
  *         required: true
- *         description: ID da conta
+ *         description: ID do user
  *         schema:
  *           type: string
  *       - in: query
@@ -171,7 +171,7 @@ router.post('/account/transaction', validate(transactionSchema), accountControll
  *       401:
  *         description: Token inválido
  */
-router.get('/account/:accountId/statement', accountController.getStatment.bind(accountController))
+router.get('/user/:userId/statement', accountController.getStatment.bind(accountController))
 
 /**
  * @swagger

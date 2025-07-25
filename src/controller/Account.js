@@ -130,26 +130,32 @@ class AccountController {
     }
   }
 
-  async getStatment(req, res, next) {
+    async getStatment(req, res, next) {
     try {
       const { getTransaction, transactionRepository } = this.di
 
-      const { accountId } = req.params
+      const requestedUserId = req.params.userId;
+      const authenticatedUserId = req.user.id;
+
       const { page = 1, limit = 10, sort = 'date', order = 'desc' } = req.query
 
-      // Converter para números
+      // Garantir que o usuário só pode ver seu próprio extrato
+      if (requestedUserId !== authenticatedUserId) {
+        return res.status(403).json({
+          message: 'Acesso negado. Você não tem permissão para ver este extrato.'
+        });
+      }
+
       const pageNumber = parseInt(page)
       const limitNumber = parseInt(limit)
       const skip = (pageNumber - 1) * limitNumber
 
-      // Validar parâmetros
       if (pageNumber < 1 || limitNumber < 1 || limitNumber > 100) {
         return res.status(400).json({
           message: 'Parâmetros de paginação inválidos. page >= 1, limit >= 1 e <= 100'
         })
       }
 
-      // Validar ordenação
       const validSortFields = ['date', 'amount', 'description', 'type', 'category']
       const validOrderValues = ['asc', 'desc']
       
@@ -167,7 +173,7 @@ class AccountController {
 
       // Buscar transações com paginação
       const transactions = await getTransaction({ 
-        filter: { accountId }, 
+        filter: { userId: requestedUserId },
         repository: transactionRepository,
         pagination: {
           skip,
@@ -178,7 +184,7 @@ class AccountController {
 
       // Buscar total de transações para calcular páginas
       const totalTransactions = await getTransaction({ 
-        filter: { accountId }, 
+        filter: { userId: requestedUserId },
         repository: transactionRepository,
         count: true
       })
